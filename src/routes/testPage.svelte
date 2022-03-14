@@ -20,7 +20,6 @@
 	});
 	// this function is run when user click on radio button
 	const getClassList = (j, i) => {
-		console.log('choose option is', $chooseAns);
 		const que = JSON.parse(dataValueIs[currentQues].content_text).question; // for collecting the queston
 		const ans = JSON.parse(dataValueIs[currentQues].content_text).answers[j].is_correct; // for collection the correct or incorrect answer(1 or 0)
 		const id = JSON.parse(dataValueIs[currentQues].content_text).answers[j].id; // for collecting the answer id(choose by user when click on radio button)

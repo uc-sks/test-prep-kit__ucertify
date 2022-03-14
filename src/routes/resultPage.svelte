@@ -2,6 +2,7 @@
 	import Header from '../components/Header.svelte';
 	import { onMount } from 'svelte';
 	import { questionAnswerData, answerCheckedByUser, reviewNavigator, chooseAns } from '../store';
+	import { truncate } from '../function/truncate';
 	let correct = 0; // for storing the correct answer by user
 	let percentage = 0; // to calculate the percentage
 	let incorrect = 0; // for incorrect answer by user
@@ -25,7 +26,6 @@
 		answerChoosebyUserArr[i] = correctIndex;
 	}
 
-	//
 	$: for (let i = 0; i < $questionAnswerData.length; i++) {
 		let actualCorrect = 0;
 		for (let j = 0; j < 4; j++) {
@@ -41,7 +41,6 @@
 		$answerCheckedByUser.sort(function (a, b) {
 			return a.quesNo - b.quesNo;
 		});
-		// console.log('answer checked by user', answerCheckedByUserResult);
 		for (let i = 0; i < $answerCheckedByUser.length; i++) {
 			if ($answerCheckedByUser[i].userAns == 1) {
 				correct = correct + 1;
@@ -51,17 +50,30 @@
 			}
 		}
 	});
-	// functon to truncate the question
-	function truncate(input) {
-		if (input.length > 60) {
-			return input.substring(0, 60) + '...';
-		}
-		return input;
-	}
-	//  if user visit review page the show dashbord button instead of end
 	const reviewPage = () => {
 		reviewNavigator.set(true);
 	};
+
+	let j;
+	let unselected = [];
+	let matched = [];
+	for (let i = 0; i < $questionAnswerData.length; i++) {
+		for ( j = 0; j < $answerCheckedByUser.length; j++) {
+			if (i + 1 == $answerCheckedByUser[j].quesNo) {
+			   matched[i]=i+1;
+			   break;
+			}
+			else{
+				matched[i]=0
+			}
+		}
+		if(j>=$answerCheckedByUser.length){
+			unselected[i] = i+1
+			// console.log('un', unselected);
+		}
+		// unselected=[i]=$answerCheckedByUser.quesNo
+	}
+	// console.log('match is',matched)
 </script>
 
 <div class="resultPage">
@@ -116,6 +128,11 @@
 							{:else}
 								<h3>correct</h3>
 							{/if}
+						{/if}
+					{/each}
+					{#each unselected as un}
+						{#if i + 1 == un}
+							<h3>Unattempted</h3>
 						{/if}
 					{/each}
 				</div>
