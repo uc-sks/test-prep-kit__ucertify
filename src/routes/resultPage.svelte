@@ -1,41 +1,64 @@
 <script>
 	import Header from '../components/Header.svelte';
 	import { onMount } from 'svelte';
-	import { questionAnswerData, answerCheckedByUser, reviewNavigator } from '../store';
-	let questionAnswer = [];
-	let correct = 0;
-	let percentage = 0;
-	let incorrect = 0;
-	let answerCheckedByUserResult = [];
-	onMount(() => {
-		questionAnswerData.subscribe((value) => {
-			questionAnswer = value;
-		});
-	});
-	onMount(() => {
-		answerCheckedByUser.subscribe((value) => {
-			answerCheckedByUserResult = value;
-			answerCheckedByUserResult.sort(function (a, b) {
-				return a.quesNo - b.quesNo;
-			});
-			console.log('answer checked by user', answerCheckedByUserResult);
-			for (let i = 0; i < answerCheckedByUserResult.length; i++) {
-				if (answerCheckedByUserResult[i].userAns == 1) {
-					correct = correct + 1;
-					percentage = Math.round((correct / 11) * 100);
-				} else {
-					incorrect = incorrect + 1;
+	import { questionAnswerData, answerCheckedByUser, reviewNavigator, chooseAns } from '../store';
+	let correct = 0; // for storing the correct answer by user
+	let percentage = 0; // to calculate the percentage
+	let incorrect = 0; // for incorrect answer by user
+	let option = ['A', 'B', 'C', 'D']; // option check by user
+	//collecting the correct answer of question (in json)
+	let actualCorrectArray = [];
+	// collecting the answwer selected by user
+	let answerChoosebyUserArr = [];
+
+	$: for (let i = 0; i < $questionAnswerData.length; i++) {
+		let correctIndex = 0;
+		if ($chooseAns[i]) {
+			for (let j = 0; j < 4; j++) {
+				if (JSON.parse($questionAnswerData[i].content_text).answers[j].answer == $chooseAns[i]) {
+					correctIndex = j;
 				}
 			}
+		} else {
+			correctIndex = null;
+		}
+		answerChoosebyUserArr[i] = correctIndex;
+	}
+
+	//
+	$: for (let i = 0; i < $questionAnswerData.length; i++) {
+		let actualCorrect = 0;
+		for (let j = 0; j < 4; j++) {
+			if (JSON.parse($questionAnswerData[i].content_text).answers[j].is_correct == '1') {
+				actualCorrect = j;
+			}
+		}
+		actualCorrectArray[i] = actualCorrect;
+	}
+
+	// subscribing the value of user selected data from json and calculating the details depend on that data
+	onMount(() => {
+		$answerCheckedByUser.sort(function (a, b) {
+			return a.quesNo - b.quesNo;
 		});
+		// console.log('answer checked by user', answerCheckedByUserResult);
+		for (let i = 0; i < $answerCheckedByUser.length; i++) {
+			if ($answerCheckedByUser[i].userAns == 1) {
+				correct = correct + 1;
+				percentage = Math.round((correct / 11) * 100);
+			} else {
+				incorrect = incorrect + 1;
+			}
+		}
 	});
-	let option = ['A', 'B', 'C', 'D'];
+	// functon to truncate the question
 	function truncate(input) {
-		if (input.length > 80) {
-			return input.substring(0, 80) + '...';
+		if (input.length > 60) {
+			return input.substring(0, 60) + '...';
 		}
 		return input;
 	}
+	//  if user visit review page the show dashbord button instead of end
 	const reviewPage = () => {
 		reviewNavigator.set(true);
 	};
@@ -62,47 +85,48 @@
 		</div>
 		<div class="resultData unattemted">
 			<h3>Unattempted</h3>
-			<p>{11 - answerCheckedByUserResult.length}</p>
+			<p>{11 - $answerCheckedByUser.length}</p>
 		</div>
 	</div>
 	<div class="resultAnswerContainer">
-		{#each questionAnswer as ques, i}
+		{#each $questionAnswerData as ques, i}
 			<a href={`review/${i}`} on:click={reviewPage}>
 				<div class="answerContainer">
 					<div class="number">
 						<span>{i + 1}</span>
 					</div>
 					<h4 class="questionWidth">{truncate(`${JSON.parse(ques.content_text).question}`)}</h4>
-					{#each answerCheckedByUserResult as result, k}
-						{#if i + 1 == result.quesNo}
-							<div class="resultOption">
-								{#each option as optionData, j}
-									<div
-										class="{`${
-											JSON.parse(questionAnswer[i].content_text).answers[j].is_correct == 1
-										}`} answer"
-										class:selected={k <= answerCheckedByUserResult.length
-											? answerCheckedByUserResult[k].userOptionCheck == j
-											: ''}
-									>
-										<p>{optionData}</p>
-									</div>
-								{/each}
+					<div class="resultOption">
+						{#each option as optionData, j}
+							<div
+								class="{`${actualCorrectArray[i] == j}`} answer"
+								class:selected={actualCorrectArray[i] != answerChoosebyUserArr[i] &&
+								answerChoosebyUserArr[i] == j
+									? true
+									: false}
+							>
+								<p>{optionData}</p>
 							</div>
+						{/each}
+					</div>
+					{#each $answerCheckedByUser as selectQue}
+						{#if i + 1 == selectQue.quesNo}
+							{#if selectQue.userAns == 0}
+								<h3>InCorrect</h3>
+							{:else}
+								<h3>correct</h3>
+							{/if}
 						{/if}
-					{:else}
-						<h4>Unattempted</h4>
 					{/each}
 				</div>
 			</a>
 		{/each}
 	</div>
 </div>
-
+<a href="/">
+	<button class="dashboard">Go To Dashboard</button>
+</a>
 <style>
-	.selected {
-		background-color: red;
-	}
 	a {
 		text-decoration: none;
 	}
@@ -141,12 +165,14 @@
 		cursor: pointer;
 	}
 	.questionWidth {
-		width: 600px;
+		width: 500px;
 		position: absolute;
 		left: 28%;
 	}
 	.resultOption {
 		display: flex;
+		position: absolute;
+		left: 61%;
 	}
 	.number {
 		width: 26px;
@@ -169,5 +195,17 @@
 	}
 	.true {
 		background-color: green;
+	}
+	.selected {
+		background-color: red;
+	}
+	.dashboard{
+		width: 150px;
+		height: 40px;
+		position: fixed;
+		bottom: 15px;
+		right: 15px;
+		border: none;
+		cursor: pointer;
 	}
 </style>

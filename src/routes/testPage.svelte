@@ -1,24 +1,30 @@
 <script>
 	import Header from '../components/Header.svelte';
 	import Navigator from '../components/Navigator.svelte';
-	import { attemptQuestion, questionAnswerData, answerCheckedByUser } from '../store';
+	import { attemptQuestion, questionAnswerData, answerCheckedByUser, chooseAns } from '../store';
 	import { onMount } from 'svelte';
-	let currentQues = 0;
-	let dataValueIs = [];
-	let checkedOpt = ['A', 'B', 'C', 'D'];
-	let userAnswer = [];
-	let useCheckAns;
+	let currentQues = 0; // which ques will be show on the page 'for one question per page'
+	let dataValueIs = []; // for collecting the json data
+	let checkedOpt = []; // for chossing the option (binding the ques with answer)
+	let userAnswer = []; // for user selection (ques, answer of that ques)
+	let useCheckAns; //for comparing the prev que to next que by user selected
+	// answer selected by user 
+	$: chooseAns.update((items) => {
+		return [...checkedOpt];
+	});
+	// fetching data from json file and seting that data to store
 	onMount(async () => {
 		const res = await fetch(`/data/jsonFile.json`);
 		dataValueIs = await res.json();
 		questionAnswerData.set(dataValueIs);
-		console.log(JSON.parse(dataValueIs[0].content_text).explanation);
 	});
+	// this function is run when user click on radio button
 	const getClassList = (j, i) => {
-		console.log('i is', i);
-		const que = JSON.parse(dataValueIs[currentQues].content_text).question;
-		const ans = JSON.parse(dataValueIs[currentQues].content_text).answers[j].is_correct;
-		const id = JSON.parse(dataValueIs[currentQues].content_text).answers[j].id;
+		console.log('choose option is', $chooseAns);
+		const que = JSON.parse(dataValueIs[currentQues].content_text).question; // for collecting the queston
+		const ans = JSON.parse(dataValueIs[currentQues].content_text).answers[j].is_correct; // for collection the correct or incorrect answer(1 or 0)
+		const id = JSON.parse(dataValueIs[currentQues].content_text).answers[j].id; // for collecting the answer id(choose by user when click on radio button)
+		// if user selected more than one question
 		if (userAnswer.length > 0) {
 			useCheckAns = {
 				quesNo: i + 1,
@@ -27,6 +33,7 @@
 				userAns: ans,
 				userOptionCheck: j
 			};
+			// for comparing the dubliccasy of question
 			for (let i = 0; i <= userAnswer.length; i++) {
 				if (userAnswer[i].userQue == useCheckAns.userQue) {
 					userAnswer[i] = useCheckAns;
@@ -37,6 +44,7 @@
 				}
 			}
 		}
+		// if user select only one question
 		if (userAnswer.length == 0) {
 			userAnswer.push({
 				quesNo: i + 1,
@@ -46,21 +54,25 @@
 				userOptionCheck: j
 			});
 		}
+		// if the dublicasy will be, the remove the dublicasy here
 		let userSelected = Object.values(
 			userAnswer.reduce((acc, cur) => Object.assign(acc, { [cur.userQue]: cur }), {})
 		);
+		// all attempted question goes here
 		answerCheckedByUser.set(userSelected);
-		for(i=0;i<=userSelected.length;i++){
-			attemptQuestion.update((x)=>x=userSelected.length)
+		for (i = 0; i <= userSelected.length; i++) {
+			attemptQuestion.update((x) => (x = userSelected.length));
 		}
-		console.log('user selected', userSelected);
 	};
+	// prev button
 	const prevPage = () => {
 		currentQues = currentQues - 1;
 	};
+	// next button
 	const nextPage = () => {
 		currentQues = currentQues + 1;
 	};
+	// showing ques per page (which one should be show depend on the currentQues)
 	const updateQues = (event) => {
 		currentQues = event.detail;
 	};
@@ -68,7 +80,7 @@
 
 <div class="test__page">
 	<Header />
-	<div class="questionsContainer" >
+	<div class="questionsContainer">
 		{#each dataValueIs as data, i}
 			{#if currentQues === i}
 				<div class="question">
@@ -83,9 +95,9 @@
 										type="radio"
 										value={answers.answer}
 										name="radio"
-										id={answers.id}
+										id="radio{j}"
 										on:click={() => getClassList(j, i)}
-										bind:group={checkedOpt[j]}
+										bind:group={checkedOpt[i]}
 									/>
 									{@html answers.answer}
 								</label>

@@ -11,24 +11,13 @@
 
 <script>
 	import Header from '../../components/Header.svelte';
-	import { questionAnswerData, answerCheckedByUser } from '../../store';
-	import { onDestroy, onMount } from 'svelte';
+	import { questionAnswerData, answerCheckedByUser ,reviewNavigator} from '../../store';
 	import Navigator from '../../components/Navigator.svelte';
+import { onDestroy } from 'svelte';
 	export let id;
-	let pageNo = Number(id);
-	let questionAnswer = [];
-	let answerCheckedByUserResult = [];
-	let explanationAnswer;
-	let checkedOpt = ['A', 'B', 'C', 'D'];
-	onMount(() => {
-		questionAnswerData.subscribe((value) => {
-			questionAnswer = value;
-		});
-		answerCheckedByUser.subscribe((value) => {
-			answerCheckedByUserResult = value;
-		});
-		console.log('id is', id);
-	});
+	let pageNo = Number(id);// change id(string) to id(number) page no. means storing 1to11
+	let explanationAnswer;//
+	// replacing the seq string to only one character(A or ,B or, C or, D )
 	$: if (pageNo + 1) {
 		explanationAnswer = JSON.parse($questionAnswerData[pageNo].content_text).explanation;
 		let indexOfSeq = explanationAnswer.indexOf('<seq');
@@ -40,21 +29,29 @@
 			indexOfSeq = explanationAnswer.indexOf('<seq');
 		}
 	}
+	// updating the question from sidebar list question
 	const upDateQuestionPage = (event) => {
 		pageNo = event.detail;
 	};
+	// for next button
 	const incrementPage = () => {
 		pageNo = pageNo + 1;
 	};
+	// for previous button
 	const decrementPage = () => {
 		pageNo = pageNo - 1;
 	};
+	onDestroy(()=>{
+		reviewNavigator.update((x)=>{
+			x=false
+		})
+	})
 </script>
 
 <div class="reviewPage">
 	<Header />
 	<div class="questionsContainer">
-		{#each questionAnswer as data, i}
+		{#each $questionAnswerData as data, i}
 			{#if pageNo == i}
 				<div class="question">
 					<h3>
@@ -65,7 +62,6 @@
 							{#each JSON.parse(data.content_text).answers as answers, j}
 								{#if answers.is_correct == 1}
 									<label class="answerOptionData">
-										<p>{checkedOpt[j]}</p>
 										<input
 											type="radio"
 											class="hello"
@@ -92,7 +88,7 @@
 							</div>
 						{/if}
 					{/each}
-					{#each answerCheckedByUserResult as user}
+					{#each $answerCheckedByUser as user}
 						{#if i + 1 == user.quesNo}
 							{#if user.userAns == '1'}
 								<div class="comparationResult">
@@ -123,9 +119,6 @@
 	label {
 		display: flex;
 		align-items: center;
-	}
-	label > p {
-		margin-right: 4px;
 	}
 	label > input {
 		margin-right: 10px;

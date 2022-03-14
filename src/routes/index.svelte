@@ -1,17 +1,11 @@
 <script>
 	import Header from '../components/Header.svelte';
-	import { reviewNavigator } from '../store';
-	const reviewPage = () => {
-		reviewNavigator.update((x)=>{
-			x=false
-		});
-	};
 </script>
 
 <Header />
 <div class="start_button">
 	<a href="/testPage">
-		<button class="start" on:click={reviewPage}>Start Test</button>
+		<button class="start">Start Test</button>
 	</a>
 </div>
 
@@ -29,5 +23,6 @@
 		background-color: #b0281a;
 		border-radius: 4px;
 		border: none;
+		color: #fff;
 	}
 </style>
