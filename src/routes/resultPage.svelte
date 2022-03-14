@@ -126,6 +126,7 @@
 <a href="/">
 	<button class="dashboard">Go To Dashboard</button>
 </a>
+
 <style>
 	a {
 		text-decoration: none;
@@ -199,7 +200,7 @@
 	.selected {
 		background-color: red;
 	}
-	.dashboard{
+	.dashboard {
 		width: 150px;
 		height: 40px;
 		position: fixed;

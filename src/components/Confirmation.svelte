@@ -29,7 +29,7 @@
 		height: 100%;
 		background-color: rgba(0, 0, 0, 0.3);
 	}
-	.modal{
+	.modal {
 		padding: 10px;
 		border-radius: 8px;
 		max-width: 400px;

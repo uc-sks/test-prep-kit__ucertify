@@ -38,28 +38,27 @@
 		height: 100%;
 		background-color: rgba(0, 0, 0, 0.3);
 	}
-  .modal{
-    padding: 10px;
+	.modal {
+		padding: 10px;
 		border-radius: 8px;
-    min-width: 300px;
+		min-width: 300px;
 		max-width: 400px;
-    min-height: 200px;
+		min-height: 200px;
 		margin: 10% auto;
 		text-align: center;
 		background: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .modal>a>button{
-    width: 150px;
-    display: inline-block;
-    background: #027ad6;
-    border: none;
-    cursor: pointer;
-    height: 30px;
-    margin-top: 10px;
-
-  }
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	.modal > a > button {
+		width: 150px;
+		display: inline-block;
+		background: #027ad6;
+		border: none;
+		cursor: pointer;
+		height: 30px;
+		margin-top: 10px;
+	}
 </style>

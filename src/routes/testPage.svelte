@@ -8,7 +8,7 @@
 	let checkedOpt = []; // for chossing the option (binding the ques with answer)
 	let userAnswer = []; // for user selection (ques, answer of that ques)
 	let useCheckAns; //for comparing the prev que to next que by user selected
-	// answer selected by user 
+	// answer selected by user
 	$: chooseAns.update((items) => {
 		return [...checkedOpt];
 	});

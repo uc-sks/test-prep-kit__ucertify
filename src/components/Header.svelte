@@ -1,9 +1,11 @@
-
 <div class="header flex">
 	<div class="logo__div flex">
-        <a href="/">
-            <img src="https://www.ucertify.com/layout/themes/bootstrap4/images/logo/ucertify_logo.png" alt="">
-        </a>
+		<a href="/">
+			<img
+				src="https://www.ucertify.com/layout/themes/bootstrap4/images/logo/ucertify_logo.png"
+				alt=""
+			/>
+		</a>
 	</div>
 	<h1>uCertify Test Prep</h1>
 </div>

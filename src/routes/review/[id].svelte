@@ -11,12 +11,12 @@
 
 <script>
 	import Header from '../../components/Header.svelte';
-	import { questionAnswerData, answerCheckedByUser ,reviewNavigator} from '../../store';
+	import { questionAnswerData, answerCheckedByUser, reviewNavigator } from '../../store';
 	import Navigator from '../../components/Navigator.svelte';
-import { onDestroy } from 'svelte';
+	import { onDestroy } from 'svelte';
 	export let id;
-	let pageNo = Number(id);// change id(string) to id(number) page no. means storing 1to11
-	let explanationAnswer;//
+	let pageNo = Number(id); // change id(string) to id(number) page no. means storing 1to11
+	let explanationAnswer; //
 	// replacing the seq string to only one character(A or ,B or, C or, D )
 	$: if (pageNo + 1) {
 		explanationAnswer = JSON.parse($questionAnswerData[pageNo].content_text).explanation;
@@ -41,11 +41,11 @@ import { onDestroy } from 'svelte';
 	const decrementPage = () => {
 		pageNo = pageNo - 1;
 	};
-	onDestroy(()=>{
-		reviewNavigator.update((x)=>{
-			x=false
-		})
-	})
+	onDestroy(() => {
+		reviewNavigator.update((x) => {
+			x = false;
+		});
+	});
 </script>
 
 <div class="reviewPage">

@@ -31,7 +31,9 @@
 		<p>Unuttempted Question {11 - questionValue}</p>
 		{#each dataValueIs as data, i}
 			<!-- svelte-ignore a11y-accesskey -->
-			<h4 class="para" on:click={() => displayQues(i)} accesskey={`${i+1}`}>Question {i + 1}   <span>{truncate(`${JSON.parse(data.content_text).question}`)}</span> </h4>
+			<h4 class="para" on:click={() => displayQues(i)} accesskey={`${i + 1}`}>
+				Question {i + 1} <span>{truncate(`${JSON.parse(data.content_text).question}`)}</span>
+			</h4>
 		{/each}
 	</div>
 {/if}

@@ -11,7 +11,7 @@
 	let sidebar_show = false;
 	let confirm_show = false;
 	export let questionId;
-	questionId=Number(questionId)
+	questionId = Number(questionId);
 	onMount(() => {
 		reviewNavigator.subscribe((value) => {
 			reviewPageCheck = value;
@@ -41,7 +41,7 @@
 				<button on:click={prevPage}>Previous</button>
 			{/if}
 			<div class="pagination">
-				<h4>{currentQues+1} of 11</h4>
+				<h4>{currentQues + 1} of 11</h4>
 			</div>
 			{#if currentQues + 1 > 10}
 				<!-- svelte-ignore a11y-accesskey -->
@@ -67,7 +67,7 @@
 				<button on:click={prevPage}>Previous</button>
 			{/if}
 			<div class="pagination">
-				<h4>{questionId+1} of 11</h4>
+				<h4>{questionId + 1} of 11</h4>
 			</div>
 			{#if questionId + 1 > 10}
 				<!-- svelte-ignore a11y-accesskey -->
@@ -78,7 +78,7 @@
 			{/if}
 			<a href="/">
 				<!-- svelte-ignore a11y-accesskey -->
-				<button accesskey="b" >Dashboard</button>
+				<button accesskey="b">Dashboard</button>
 			</a>
 		</div>
 	</div>
