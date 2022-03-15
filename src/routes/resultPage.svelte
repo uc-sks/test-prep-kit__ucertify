@@ -7,11 +7,8 @@
 	let percentage = 0; // to calculate the percentage
 	let incorrect = 0; // for incorrect answer by user
 	let option = ['A', 'B', 'C', 'D']; // option check by user
-	//collecting the correct answer of question (in json)
-	let actualCorrectArray = [];
-	// collecting the answwer selected by user
-	let answerChoosebyUserArr = [];
-
+	let actualCorrectArray = [];//collecting the correct answer of question (in json)
+	let answerChoosebyUserArr = [];// collecting the answwer selected by user
 	$: for (let i = 0; i < $questionAnswerData.length; i++) {
 		let correctIndex = 0;
 		if ($chooseAns[i]) {
@@ -25,7 +22,6 @@
 		}
 		answerChoosebyUserArr[i] = correctIndex;
 	}
-
 	$: for (let i = 0; i < $questionAnswerData.length; i++) {
 		let actualCorrect = 0;
 		for (let j = 0; j < 4; j++) {
@@ -35,7 +31,6 @@
 		}
 		actualCorrectArray[i] = actualCorrect;
 	}
-
 	// subscribing the value of user selected data from json and calculating the details depend on that data
 	onMount(() => {
 		$answerCheckedByUser.sort(function (a, b) {
@@ -53,7 +48,6 @@
 	const reviewPage = () => {
 		reviewNavigator.set(true);
 	};
-
 	let j;
 	let unselected = [];
 	let matched = [];
@@ -69,13 +63,9 @@
 		}
 		if(j>=$answerCheckedByUser.length){
 			unselected[i] = i+1
-			// console.log('un', unselected);
 		}
-		// unselected=[i]=$answerCheckedByUser.quesNo
 	}
-	// console.log('match is',matched)
 </script>
-
 <div class="resultPage">
 	<Header />
 	<div class="resultPage__container">
