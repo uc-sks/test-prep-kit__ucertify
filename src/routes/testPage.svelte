@@ -36,7 +36,6 @@
 			for (let i = 0; i <= userAnswer.length; i++) {
 				if (userAnswer[i].userQue == useCheckAns.userQue) {
 					userAnswer[i] = useCheckAns;
-					useCheckAns;
 					break;
 				} else {
 					userAnswer.push(useCheckAns);
