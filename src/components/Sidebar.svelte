@@ -1,6 +1,7 @@
 <script>
 	import { fly } from 'svelte/transition';
 	import { attemptQuestion } from '../store';
+	import { clickOutside } from '../function/clickOutside';
 	import { onMount } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
@@ -26,7 +27,8 @@
 </script>
 
 {#if show}
-	<div class="list" transition:fly={{ x: -250, opacity: 1 }}>
+	<div class="list" transition:fly={{ x: -250, opacity: 1 }} use:clickOutside
+	on:click_outside={()=>show=false} on:click={()=>show=false}>
 		<p>Attempte question :{questionValue}</p>
 		<p>Unuttempted Question {11 - questionValue}</p>
 		{#each dataValueIs as data, i}

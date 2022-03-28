@@ -62,6 +62,7 @@
 							{#each JSON.parse(data.content_text).answers as answers, j}
 								{#if answers.is_correct == 1}
 									<label class="answerOptionData">
+										<p>{String.fromCharCode(65+j)}</p>
 										<input
 											type="radio"
 											class="hello"
@@ -74,6 +75,7 @@
 									</label>
 								{:else}
 									<label class="answerOptionData">
+										<p>{String.fromCharCode(65+j)}</p>
 										<input type="radio" name="radio" disabled />
 										{@html answers.answer}
 									</label>
@@ -108,7 +110,7 @@
 </div>
 <div class="textPage__option">
 	<Navigator
-		questionId={pageNo}
+		question__id={pageNo}
 		on:updateQues={upDateQuestionPage}
 		on:nextPage={incrementPage}
 		on:prevPage={decrementPage}
@@ -119,6 +121,13 @@
 	label {
 		display: flex;
 		align-items: center;
+	}
+	.answerOptionData{
+		display: flex;
+		align-items: center;
+	}
+	.answerOptionData>input{
+		margin-left: 10px;
 	}
 	label > input {
 		margin-right: 10px;

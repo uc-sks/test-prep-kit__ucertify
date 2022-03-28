@@ -1,13 +1,10 @@
 <script>
 	import { tweened } from 'svelte/motion';
-	import Confirmation from './Confirmation.svelte';
-	let original = 2 * 60; // TYPE NUMBER OF SECONDS HERE
+	let original = 2 * 60; 
 	let timer = tweened(original);
-	// ------ dont need to modify code below
 	setInterval(() => {
 		if ($timer > 0) $timer--;
 	}, 1000);
-
 	$: minutes = Math.floor($timer / 60);
 	$: seconds = Math.floor($timer - minutes * 60);
 </script>
@@ -19,9 +16,30 @@
 			<a href="/resultPage"><button>See Your Result</button></a>
 		</div>
 	</div>
+	<h4>
+		{#if minutes.toString().length > 1}
+			<span>{minutes}:</span>
+		{:else}
+			<span>0{minutes}:</span>
+		{/if}
+		{#if seconds.toString().length > 1}
+			<span>{seconds}</span>
+		{:else}
+			<span>0{seconds}</span>
+		{/if}
+	</h4>
 {:else}
 	<h4>
-		<span class="mins">{minutes}</span><span class="secs">:{seconds}</span>
+		{#if minutes.toString().length > 1}
+			<span>{minutes}:</span>
+		{:else}
+			<span>0{minutes}:</span>
+		{/if}
+		{#if seconds.toString().length > 1}
+			<span>{seconds}</span>
+		{:else}
+			<span>0{seconds}</span>
+		{/if}
 	</h4>
 {/if}
 

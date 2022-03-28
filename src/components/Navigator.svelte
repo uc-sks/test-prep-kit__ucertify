@@ -1,88 +1,80 @@
 <script>
-	import Timer from './Timer.svelte';
-	import Confirmation from './Confirmation.svelte';
 	import { createEventDispatcher } from 'svelte';
-	import { reviewNavigator } from '../store';
+	import Confirmation from './Confirmation.svelte';
+	import { reviewNavigator, chooseAns } from '../store.js';
 	import Sidebar from './Sidebar.svelte';
-	import { onMount } from 'svelte';
+	import Timer from '../components/Timer.svelte';
 	const dispatch = createEventDispatcher();
-	export let currentQues;
-	let reviewPageCheck;
-	let sidebar_show = false;
-	let confirm_show = false;
-	export let questionId;
-	questionId = Number(questionId);
-	onMount(() => {
-		reviewNavigator.subscribe((value) => {
-			reviewPageCheck = value;
-		});
-	});
+	export let currentQues; //for changing current question (for next and pre)
+	let sidebar__show = false;
+	let confirm__show = false;
+	export let question__id;
+	question__id = Number(question__id);
+	$: current__ques = !$reviewNavigator ? currentQues : question__id;
+	// previous page function
 	const prevPage = () => {
 		dispatch('prevPage');
 	};
+	// next page function
 	const nextPage = () => {
 		dispatch('nextPage');
 	};
+	//  update question click on sidebar
 	const displayQuesNum = (event) => {
 		dispatch('updateQues', event.detail);
 	};
 </script>
 
-{#if !reviewPageCheck}
-	<div class="navigator">
-		<div class="navigator__option">
+<div class="navigator">
+	<div class="navigator__option">
+		{#if !$reviewNavigator}
 			<Timer />
-			<!-- svelte-ignore a11y-accesskey -->
-			<button on:click={() => (sidebar_show = !sidebar_show)} accesskey="l"> List </button>
-			<Sidebar bind:show={sidebar_show} on:displayQuesNum={displayQuesNum} />
-			{#if currentQues < 1}
-				<button on:click={prevPage} disabled>Previous</button>
+		{/if}
+		<!-- svelte-ignore a11y-accesskey -->
+		<button on:click={() => (sidebar__show = !sidebar__show)}  accesskey="l">
+			List
+		</button>
+		<Sidebar bind:show={sidebar__show} on:displayQuesNum={displayQuesNum} />
+		<!-- svelte-ignore a11y-accesskey -->
+		<button
+			on:click={prevPage}
+			accesskey="n"
+			disabled={current__ques < 1 ? true : false}>Previous</button
+		>
+		{#if !$reviewNavigator}
+			{#if (currentQues + 1).toString().length > 1}
+				<span>{currentQues + 1} of 11</span>
 			{:else}
-				<button on:click={prevPage}>Previous</button>
+				<span>0{currentQues + 1} of 11</span>
 			{/if}
-			<div class="pagination">
-				<h4>{currentQues + 1} of 11</h4>
-			</div>
-			{#if currentQues + 1 > 10}
-				<!-- svelte-ignore a11y-accesskey -->
-				<button on:click={nextPage} disabled accesskey="n">Next</button>
-			{:else}
-				<!-- svelte-ignore a11y-accesskey -->
-				<button on:click={nextPage} accesskey="n">Next</button>
-			{/if}
-			<!-- svelte-ignore a11y-accesskey -->
-			<button on:click={() => (confirm_show = !confirm_show)} accesskey="t">End Test</button>
-		</div>
-	</div>
-	<Confirmation bind:show={confirm_show} />
-{:else}
-	<div class="navigator">
-		<div class="navigator__option">
-			<!-- svelte-ignore a11y-accesskey -->
-			<button on:click={() => (sidebar_show = !sidebar_show)} accesskey="l"> List </button>
-			<Sidebar bind:show={sidebar_show} on:displayQuesNum={displayQuesNum} />
-			{#if questionId < 1}
-				<button on:click={prevPage} disabled>Previous</button>
-			{:else}
-				<button on:click={prevPage}>Previous</button>
-			{/if}
-			<div class="pagination">
-				<h4>{questionId + 1} of 11</h4>
-			</div>
-			{#if questionId + 1 > 10}
-				<!-- svelte-ignore a11y-accesskey -->
-				<button on:click={nextPage} disabled accesskey="n">Next</button>
-			{:else}
-				<!-- svelte-ignore a11y-accesskey -->
-				<button on:click={nextPage} accesskey="n">Next</button>
-			{/if}
+		{:else if (question__id + 1).toString().length > 1}
+			<span>{question__id + 1} of 11</span>
+		{:else}
+			<span>0{question__id + 1} of 11</span>
+		{/if}
+		<!-- svelte-ignore a11y-accesskey -->
+		<button
+			on:click={nextPage}
+			accesskey="n"
+			disabled={current__ques + 1 > 10 ? true : false}>Next</button
+		>
+		<!-- svelte-ignore a11y-accesskey -->
+		{#if !$reviewNavigator}
+			<button  accesskey="t" on:click={() => (confirm__show = !confirm__show)}>End Test</button
+			>
+		{:else}
 			<a href="/">
 				<!-- svelte-ignore a11y-accesskey -->
 				<button accesskey="b">Dashboard</button>
 			</a>
-		</div>
+			<a href="/resultPage">
+				<!-- svelte-ignore a11y-accesskey -->
+				<button accesskey="b">Result</button>
+			</a>
+		{/if}
 	</div>
-{/if}
+</div>
+<Confirmation bind:show={confirm__show} />
 
 <style>
 	.navigator__option {

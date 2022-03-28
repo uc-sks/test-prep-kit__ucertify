@@ -90,6 +90,7 @@
 						<div class="answerOption">
 							{#each JSON.parse(data.content_text).answers as answers, j}
 								<label class="answerOptionData">
+									<p>{String.fromCharCode(65+j)}</p>
 									<input
 										type="radio"
 										value={answers.answer}
@@ -118,6 +119,13 @@
 </div>
 
 <style>
+	.answerOptionData{
+		display: flex;
+		align-items: center;
+	}
+	.answerOptionData>input{
+		margin-left: 10px;
+	}
 	.questionsContainer {
 		max-width: 800px;
 		margin: 0 auto;

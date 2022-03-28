@@ -6,7 +6,6 @@
 	let correct = 0; // for storing the correct answer by user
 	let percentage = 0; // to calculate the percentage
 	let incorrect = 0; // for incorrect answer by user
-	let option = ['A', 'B', 'C', 'D']; // option check by user
 	let actualCorrectArray = [];//collecting the correct answer of question (in json)
 	let answerChoosebyUserArr = [];// collecting the answwer selected by user
 	$: for (let i = 0; i < $questionAnswerData.length; i++) {
@@ -99,7 +98,7 @@
 					</div>
 					<h4 class="questionWidth">{truncate(`${JSON.parse(ques.content_text).question}`)}</h4>
 					<div class="resultOption">
-						{#each option as optionData, j}
+						{#each JSON.parse(ques.content_text).answers as answers, j}
 							<div
 								class="{`${actualCorrectArray[i] == j}`} answer"
 								class:selected={actualCorrectArray[i] != answerChoosebyUserArr[i] &&
@@ -107,7 +106,7 @@
 									? true
 									: false}
 							>
-								<p>{optionData}</p>
+								<p>{String.fromCharCode(65+j)}</p>
 							</div>
 						{/each}
 					</div>
