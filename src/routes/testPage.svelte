@@ -13,7 +13,7 @@
 	import '../../src/index.css'
 	import Header from '../components/Header.svelte';
 	import { question__data, choose__ans } from '../store';
-	import { afterUpdate, onMount } from 'svelte';
+	import {onMount } from 'svelte';
 	import Navigator from '../components/Navigator.svelte';
 	let questionjson__data = [];
 	let checked__opt = [];
@@ -24,9 +24,6 @@
 		questionjson__data = await response.json();
 		question__data.set(questionjson__data);
 	});
-	afterUpdate(()=>{
-		console.log('array is',$choose__ans)
-	})
 </script>
 
 <div class="test__page">

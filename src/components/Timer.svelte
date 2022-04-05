@@ -12,7 +12,7 @@
 
 {#if minutes == 0 && seconds == 0}
 	<div class="confirm__box flex">
-		<div class="modal flex">
+		<div class="modal flex flex__colomn">
 			<h3>Test Time is Over</h3>
 			<a href="/resultPage">
 				<button class="button" style="width: 180px;">See Your Result</button>
