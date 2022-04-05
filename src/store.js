@@ -1,15 +1,7 @@
 import { writable } from 'svelte/store';
 // for storing the json data 
-export const questionAnswerData=writable([])
-// to store how many question are attempted
-export const attemptQuestion = writable(0);
-// to store only correct answer
-export const correctAnswer=writable(0)
-// for storing incorrect answer
-export const incorrectAnswer=writable(0)
-// which question and answer are selected by user are store here
-export const answerCheckedByUser=writable([])
-// show dashboard button instead of end button on revew page
-export const reviewNavigator=writable(false)
-// binding queston with kits answer
-export const chooseAns=writable([])
+export const question__data=writable([])// for storing the json data 
+export const choose__ans=writable([])//choose answer with bind
+export const review__navi=writable(false)// navigator for review page
+export const answerchoosebyuser = writable([])// collection the index of option check by user (a,b,c,d)
+export const actualcorrect=writable([])// collecting the index of actual correct option from json data

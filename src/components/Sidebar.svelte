@@ -1,65 +1,36 @@
 <script>
+	import '../../src/index.css'
 	import { fly } from 'svelte/transition';
-	import { attemptQuestion } from '../store';
+	import { question__data, choose__ans } from '../store';
 	import { clickOutside } from '../function/clickOutside';
-	import { onMount } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
+	import { truncate } from '../function/truncate';
+	import { afterUpdate } from 'svelte';
 	const dispatch = createEventDispatcher();
 	export let show = false;
-	let dataValueIs = [];
-	onMount(async () => {
-		const res = await fetch(`/data/jsonFile.json`);
-		dataValueIs = await res.json();
-	});
-	let questionValue;
-	attemptQuestion.subscribe((value) => {
-		questionValue = value;
+	let total__attempted = 0;
+	afterUpdate(() => {
+		let data = $choose__ans.filter(Boolean);
+		total__attempted = data.length;
 	});
 	const displayQues = (i) => {
 		dispatch('displayQuesNum', i);
 	};
-	function truncate(input) {
-		if (input.length > 12) {
-			return input.substring(0, 12) + '...';
-		}
-		return input;
-	}
 </script>
 
 {#if show}
-	<div class="list" transition:fly={{ x: -250, opacity: 1 }} use:clickOutside
-	on:click_outside={()=>show=false} on:click={()=>show=false}>
-		<p>Attempte question :{questionValue}</p>
-		<p>Unuttempted Question {11 - questionValue}</p>
-		{#each dataValueIs as data, i}
+	<div class="list flex flex__colomn" transition:fly={{ x: -250, opacity: 1 }}
+	 use:clickOutside
+	on:click_outside={()=>show=false} 
+	on:click={()=>show=false}>
+		<p>Attempte question :{total__attempted}</p>
+		<p>Unuttempted Question {11 - total__attempted}</p>
+		{#each $question__data as data, i}
 			<!-- svelte-ignore a11y-accesskey -->
 			<h4 class="para" on:click={() => displayQues(i)} accesskey={`${i + 1}`}>
-				Question {i + 1} <span>{truncate(`${JSON.parse(data.content_text).question}`)}</span>
+				Ques {i + 1}. <span>{truncate(`${JSON.parse(data.content_text).question}`)}</span>
 			</h4>
 		{/each}
 	</div>
 {/if}
 
-<style>
-	.list {
-		position: fixed;
-		top: 0;
-		left: 0;
-		height: 100%;
-		padding: 2rem 1rem 0.6rem;
-		border: 1px solid #aaa;
-		background: #fff;
-		overflow-y: auto;
-		width: 15rem;
-		color: black;
-		display: flex;
-		flex-direction: column;
-	}
-	.para {
-		margin-top: 10px;
-	}
-	.para:hover {
-		cursor: pointer;
-		color: red;
-	}
-</style>

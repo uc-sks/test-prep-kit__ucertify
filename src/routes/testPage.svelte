@@ -1,102 +1,55 @@
 <script>
+	
+	/**
+	 *	fileName  		:  		testPage.svelte
+	 *	Description 	: 		showing test page with question answer and navigator data
+	 *	Author   		: 		shivam singh
+	 *	version 		: 		1.0
+	 *	created 		: 		08-feb-2022;
+	 *	updated by 		: 		shivam singh   shivam.singh@ucertify.com
+	 *	updated date 	: 		05-Apr-2022
+	 */
+
+	import '../../src/index.css'
 	import Header from '../components/Header.svelte';
+	import { question__data, choose__ans } from '../store';
+	import { afterUpdate, onMount } from 'svelte';
 	import Navigator from '../components/Navigator.svelte';
-	import { attemptQuestion, questionAnswerData, answerCheckedByUser, chooseAns } from '../store';
-	import { onMount } from 'svelte';
-	let currentQues = 0; // which ques will be show on the page 'for one question per page'
-	let dataValueIs = []; // for collecting the json data
-	let checkedOpt = []; // for chossing the option (binding the ques with answer)
-	let userAnswer = []; // for user selection (ques, answer of that ques)
-	let useCheckAns; //for comparing the prev que to next que by user selected
-	// answer selected by user
-	$: chooseAns.update((items) => {
-		return [...checkedOpt];
-	});
-	// fetching data from json file and seting that data to store
+	let questionjson__data = [];
+	let checked__opt = [];
+	let current__ques = 0;
 	onMount(async () => {
-		const res = await fetch(`/data/jsonFile.json`);
-		dataValueIs = await res.json();
-		questionAnswerData.set(dataValueIs);
+		$choose__ans = checked__opt;
+		const response = await fetch(`/data/jsonFile.json`);
+		questionjson__data = await response.json();
+		question__data.set(questionjson__data);
 	});
-	// this function is run when user click on radio button
-	const getClassList = (j, i) => {
-		const que = JSON.parse(dataValueIs[currentQues].content_text).question; // for collecting the queston
-		const ans = JSON.parse(dataValueIs[currentQues].content_text).answers[j].is_correct; // for collection the correct or incorrect answer(1 or 0)
-		const id = JSON.parse(dataValueIs[currentQues].content_text).answers[j].id; // for collecting the answer id(choose by user when click on radio button)
-		// if user selected more than one question
-		if (userAnswer.length > 0) {
-			useCheckAns = {
-				quesNo: i + 1,
-				userId: id,
-				userQue: que,
-				userAns: ans,
-				userOptionCheck: j
-			};
-			// for comparing the dubliccasy of question
-			for (let i = 0; i <= userAnswer.length; i++) {
-				if (userAnswer[i].userQue == useCheckAns.userQue) {
-					userAnswer[i] = useCheckAns;
-					break;
-				} else {
-					userAnswer.push(useCheckAns);
-				}
-			}
-		}
-		// if user select only one question
-		if (userAnswer.length == 0) {
-			userAnswer.push({
-				quesNo: i + 1,
-				userId: id,
-				userQue: que,
-				userAns: ans,
-				userOptionCheck: j
-			});
-		}
-		// if the dublicasy will be, the remove the dublicasy here
-		let userSelected = Object.values(
-			userAnswer.reduce((acc, cur) => Object.assign(acc, { [cur.userQue]: cur }), {})
-		);
-		// all attempted question goes here
-		answerCheckedByUser.set(userSelected);
-		for (i = 0; i <= userSelected.length; i++) {
-			attemptQuestion.update((x) => (x = userSelected.length));
-		}
-	};
-	// prev button
-	const prevPage = () => {
-		currentQues = currentQues - 1;
-	};
-	// next button
-	const nextPage = () => {
-		currentQues = currentQues + 1;
-	};
-	// showing ques per page (which one should be show depend on the currentQues)
-	const updateQues = (event) => {
-		currentQues = event.detail;
-	};
+	afterUpdate(()=>{
+		console.log('array is',$choose__ans)
+	})
 </script>
 
 <div class="test__page">
 	<Header />
-	<div class="questionsContainer">
-		{#each dataValueIs as data, i}
-			{#if currentQues === i}
+	<div class="ques__cntnr">
+		{#each questionjson__data as data, i}
+			{#if current__ques === i}
 				<div class="question">
 					<h3>
 						{i + 1} . {JSON.parse(data.content_text).question}
 					</h3>
-					<div class="answer">
-						<div class="answerOption">
+					<div class="flex flex__colomn" style="margin-top: 30px;">
+						<div class="answerOption flex flex__colomn">
 							{#each JSON.parse(data.content_text).answers as answers, j}
-								<label class="answerOptionData">
+								<label class="answerOptionData flex items__center" style="margin-top: 10px;">
 									<p>{String.fromCharCode(65+j)}</p>
 									<input
 										type="radio"
 										value={answers.answer}
 										name="radio"
+										class="mar_l_10"
 										id="radio{j}"
-										on:click={() => getClassList(j, i)}
-										bind:group={checkedOpt[i]}
+										bind:group={checked__opt[i]}
 									/>
 									{@html answers.answer}
 								</label>
@@ -107,41 +60,13 @@
 			{/if}
 		{/each}
 	</div>
-	<div class="textPage__option">
+	<div class="textPage__option width__50">
 		<Navigator
-			on:prevPage={prevPage}
-			on:nextPage={nextPage}
-			on:updateQues={updateQues}
-			{currentQues}
+			on:prevPage={()=>current__ques-=1}
+			on:nextPage={()=>current__ques+=1}
+			on:updateQues={(event)=>current__ques=event.detail}
+			{current__ques}
 		/>
 	</div>
 </div>
 
-<style>
-	.answerOptionData{
-		display: flex;
-		align-items: center;
-	}
-	.answerOptionData>input{
-		margin-left: 10px;
-	}
-	.questionsContainer {
-		max-width: 800px;
-		margin: 0 auto;
-	}
-	.answer {
-		display: flex;
-		flex-direction: column;
-	}
-	.answerOption {
-		display: flex;
-		flex-direction: column;
-	}
-	.textPage__option {
-		position: fixed;
-		bottom: 10px;
-		right: 20px;
-		width: 50%;
-		border: 1px solid lightgray;
-	}
-</style>

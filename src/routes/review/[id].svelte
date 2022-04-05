@@ -10,16 +10,25 @@
 </script>
 
 <script>
+	/**
+	 *	fileName  		:  		[id].svelte
+	 *	Description 	: 		showing review page with selected question
+	 *	Author   		: 		shivam singh
+	 *	version 		: 		1.0
+	 *	created 		: 		08-feb-2022;
+	 *	updated by 		: 		shivam singh   shivam.singh@ucertify.com
+	 *	updated date 	: 		05-Apr-2022
+	 */
+	import '../../../src/index.css';
 	import Header from '../../components/Header.svelte';
-	import { questionAnswerData, answerCheckedByUser, reviewNavigator } from '../../store';
 	import Navigator from '../../components/Navigator.svelte';
+	import { question__data, review__navi, answerchoosebyuser, actualcorrect } from '../../store';
 	import { onDestroy } from 'svelte';
 	export let id;
-	let pageNo = Number(id); // change id(string) to id(number) page no. means storing 1to11
-	let explanationAnswer; //
-	// replacing the seq string to only one character(A or ,B or, C or, D )
-	$: if (pageNo + 1) {
-		explanationAnswer = JSON.parse($questionAnswerData[pageNo].content_text).explanation;
+	let page__no = Number(id);
+	let explanationAnswer;
+	$: if (page__no + 1) {
+		explanationAnswer = JSON.parse($question__data[page__no].content_text).explanation;
 		let indexOfSeq = explanationAnswer.indexOf('<seq');
 		while (indexOfSeq > -1) {
 			let str1 = explanationAnswer.substr(indexOfSeq, 14);
@@ -29,43 +38,29 @@
 			indexOfSeq = explanationAnswer.indexOf('<seq');
 		}
 	}
-	// updating the question from sidebar list question
-	const upDateQuestionPage = (event) => {
-		pageNo = event.detail;
-	};
-	// for next button
-	const incrementPage = () => {
-		pageNo = pageNo + 1;
-	};
-	// for previous button
-	const decrementPage = () => {
-		pageNo = pageNo - 1;
-	};
 	onDestroy(() => {
-		reviewNavigator.update((x) => {
-			x = false;
-		});
+		review__navi.set(false);
 	});
 </script>
 
 <div class="reviewPage">
 	<Header />
-	<div class="questionsContainer">
-		{#each $questionAnswerData as data, i}
-			{#if pageNo == i}
+	<div class="ques__cntnr">
+		{#each $question__data as data, i}
+			{#if page__no == i}
 				<div class="question">
 					<h3>
 						{i + 1} . {JSON.parse(data.content_text).question}
 					</h3>
-					<div class="answer">
-						<div class="answerOption">
+					<div class="flex flex__colomn">
+						<div class="answerOption flex flex__colomn">
 							{#each JSON.parse(data.content_text).answers as answers, j}
 								{#if answers.is_correct == 1}
-									<label class="answerOptionData">
-										<p>{String.fromCharCode(65+j)}</p>
+									<label class="answerOptionData answerOptionData flex items__center">
+										<p>{String.fromCharCode(65 + j)}</p>
 										<input
 											type="radio"
-											class="hello"
+											class="correct__ans mar_l_10"
 											value={j}
 											name="radio"
 											bind:group={answers}
@@ -74,9 +69,9 @@
 										{@html answers.answer}
 									</label>
 								{:else}
-									<label class="answerOptionData">
-										<p>{String.fromCharCode(65+j)}</p>
-										<input type="radio" name="radio" disabled />
+									<label class="answerOptionData answerOptionData flex items__center">
+										<p>{String.fromCharCode(65 + j)}</p>
+										<input type="radio" name="radio" disabled class="mar_l_10" />
 										{@html answers.answer}
 									</label>
 								{/if}
@@ -90,87 +85,23 @@
 							</div>
 						{/if}
 					{/each}
-					{#each $answerCheckedByUser as user}
-						{#if i + 1 == user.quesNo}
-							{#if user.userAns == '1'}
-								<div class="comparationResult">
-									<h3>Correct</h3>
-								</div>
-							{:else}
-								<div class="comparationResult">
-									<h3>Incorrect</h3>
-								</div>
-							{/if}
-						{/if}
-					{/each}
+					{#if $answerchoosebyuser[i] == $actualcorrect[i]}
+						<span class="corr_inco_unatt button flex justify__center items__center">Correct</span>
+					{:else if $answerchoosebyuser[i] == null}
+						<span class="corr_inco_unatt button flex justify__center items__center">Unattempted</span>
+					{:else}
+						<span class="corr_inco_unatt button flex justify__center items__center">Incorrect</span>
+					{/if}
 				</div>
 			{/if}
 		{/each}
 	</div>
 </div>
-<div class="textPage__option">
+<div class="textPage__option width__50">
 	<Navigator
-		question__id={pageNo}
-		on:updateQues={upDateQuestionPage}
-		on:nextPage={incrementPage}
-		on:prevPage={decrementPage}
+		question__id={page__no}
+		on:updateQues={(event) => (page__no = event.detail)}
+		on:nextPage={() => (page__no += 1)}
+		on:prevPage={() => (page__no -= 1)}
 	/>
 </div>
-
-<style>
-	label {
-		display: flex;
-		align-items: center;
-	}
-	.answerOptionData{
-		display: flex;
-		align-items: center;
-	}
-	.answerOptionData>input{
-		margin-left: 10px;
-	}
-	label > input {
-		margin-right: 10px;
-	}
-	.comparationResult > h3 {
-		text-align: center;
-	}
-	.hello {
-		border: 2px solid white;
-		box-shadow: 0 0 0 1px #392;
-		appearance: none;
-		border-radius: 50%;
-		width: 12px;
-		height: 12px;
-		background-color: green;
-		transition: all ease-in 0.2s;
-	}
-	.explanation {
-		background-color: rgb(149 200 210 / 33%);
-		padding: 8px;
-		margin-top: 50px;
-	}
-	.questionsContainer {
-		max-width: 800px;
-		margin: 0 auto;
-	}
-	.answer {
-		display: flex;
-		flex-direction: column;
-		margin-top: 30px;
-	}
-	.answerOption {
-		display: flex;
-		flex-direction: column;
-	}
-	.answerOptionData {
-		margin-top: 8px;
-	}
-	.textPage__option {
-		position: fixed;
-		bottom: 10px;
-		right: 20px;
-		width: 50%;
-		border: 1px solid lightgray;
-	}
-</style>
