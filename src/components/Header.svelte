@@ -1,6 +1,6 @@
-<div class="header flex items__center">
-	<div class="logo__div flex items__center">
-		<a href="/">
+<div class="header flex items_center">
+	<div class="logo_div flex items_center">
+		<a href={"/"}>
 			<img
 				src="https://www.ucertify.com/layout/themes/bootstrap4/images/logo/ucertify_logo.png"
 				alt=""
@@ -14,7 +14,7 @@
 		border-bottom: 1px solid black;
 		padding: 5px;
 	}
-	.logo__div {
+	.logo_div {
 		background-color: lightgray;
 		width: 140px;
 		height: 40px;

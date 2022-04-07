@@ -22,13 +22,13 @@
 	import '../../../src/index.css';
 	import Header from '../../components/Header.svelte';
 	import Navigator from '../../components/Navigator.svelte';
-	import { question__data, review__navi, answerchoosebyuser, actualcorrect } from '../../store';
+	import { question_data, review_navi, answerchoosebyuser, actualcorrect } from '../../store';
 	import { onDestroy } from 'svelte';
 	export let id;
-	let page__no = Number(id);
+	let page_no = Number(id);
 	let explanationAnswer;
-	$: if (page__no + 1) {
-		explanationAnswer = JSON.parse($question__data[page__no].content_text).explanation;
+	$: if (page_no + 1) {
+		explanationAnswer = JSON.parse($question_data[page_no].content_text).explanation;
 		let indexOfSeq = explanationAnswer.indexOf('<seq');
 		while (indexOfSeq > -1) {
 			let str1 = explanationAnswer.substr(indexOfSeq, 14);
@@ -39,41 +39,58 @@
 		}
 	}
 	onDestroy(() => {
-		review__navi.set(false);
+		review_navi.set(false);
 	});
 </script>
 
 <div class="reviewPage">
 	<Header />
-	<div class="ques__cntnr">
-		{#each $question__data as data, i}
-			{#if page__no == i}
+	<div class="ques_cntnr">
+		{#each $question_data as data, i}
+			{#if page_no == i}
 				<div class="question">
-					<h3>
+					<h3 class="question_test">
 						{i + 1} . {JSON.parse(data.content_text).question}
 					</h3>
-					<div class="flex flex__colomn">
-						<div class="answerOption flex flex__colomn">
+					<div class="flex flex_colomn">
+						<div class="answerOption flex flex_colomn">
 							{#each JSON.parse(data.content_text).answers as answers, j}
 								{#if answers.is_correct == 1}
-									<label class="answerOptionData answerOptionData flex items__center">
-										<p>{String.fromCharCode(65 + j)}</p>
-										<input
-											type="radio"
-											class="correct__ans mar_l_10"
-											value={j}
-											name="radio"
-											bind:group={answers}
-											disabled
-										/>
-										{@html answers.answer}
-									</label>
+								<div class="main flex items_center">
+									<div class="option_d flex  items_center">
+										<!-- svelte-ignore a11y-label-has-associated-control -->
+										<label class="label_ans">{String.fromCharCode(65 + j)}</label>
+										<div class="input_div flex justify_center items_center">
+											<input
+												type="radio"
+												class="input_radio correct_ans"
+												value={answers.answer}
+												name="radio"
+												id="radio{j}"
+						                        
+											/>
+										</div>
+									</div>
+									<span class="answer_data">{@html answers.answer}</span>
+								</div>
 								{:else}
-									<label class="answerOptionData answerOptionData flex items__center">
-										<p>{String.fromCharCode(65 + j)}</p>
-										<input type="radio" name="radio" disabled class="mar_l_10" />
-										{@html answers.answer}
-									</label>
+								<div class="main flex items_center">
+									<div class="option_d flex  items_center">
+										<!-- svelte-ignore a11y-label-has-associated-control -->
+										<label class="label_ans">{String.fromCharCode(65 + j)}</label>
+										<div class="input_div flex justify_center items_center">
+											<input
+												type="radio"
+												class="input_radio"
+												value={answers.answer}
+												name="radio"
+												id="radio{j}"
+												disabled
+											/>
+										</div>
+									</div>
+									<span class="answer_data">{@html answers.answer}</span>
+								</div>
 								{/if}
 							{/each}
 						</div>
@@ -86,22 +103,22 @@
 						{/if}
 					{/each}
 					{#if $answerchoosebyuser[i] == $actualcorrect[i]}
-						<span class="corr_inco_unatt button flex justify__center items__center">Correct</span>
+						<span class="corr_inco_unatt button flex justify_center items_center">Correct</span>
 					{:else if $answerchoosebyuser[i] == null}
-						<span class="corr_inco_unatt button flex justify__center items__center">Unattempted</span>
+						<span class="corr_inco_unatt button flex justify_center items_center">Unattempted</span>
 					{:else}
-						<span class="corr_inco_unatt button flex justify__center items__center">Incorrect</span>
+						<span class="corr_inco_unatt button flex justify_center items_center">Incorrect</span>
 					{/if}
 				</div>
 			{/if}
 		{/each}
 	</div>
 </div>
-<div class="textPage__option width__50">
+<div class="textPage_option width_50">
 	<Navigator
-		question__id={page__no}
-		on:updateQues={(event) => (page__no = event.detail)}
-		on:nextPage={() => (page__no += 1)}
-		on:prevPage={() => (page__no -= 1)}
+		question_id={page_no}
+		on:updateQues={(event) => (page_no = event.detail)}
+		on:nextPage={() => (page_no += 1)}
+		on:prevPage={() => (page_no -= 1)}
 	/>
 </div>

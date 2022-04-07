@@ -9,9 +9,9 @@
 	 *	updated date 	: 		05-Apr-2022
 	 */
 	import {
-		question__data,
-		choose__ans,
-		review__navi,
+		question_data,
+		choose_ans,
+		review_navi,
 		answerchoosebyuser,
 		actualcorrect
 	} from '../store';
@@ -19,90 +19,90 @@
 	let correct = 0;
 	let incorrect = 0;
 	let percentage = 0;
-	let answerchoosebyuser__arr = [];
-	let actualcorrect__arry = [];
-	$: unselected__ques = 0;
-	$: for (let i = 0; i < $question__data.length; i++) {
-		let correct__indx = 0;
-		if ($choose__ans[i]) {
+	let answerchoosebyuser_arr = [];
+	let actualcorrect_arry = [];
+	const reviewPage = () => {
+		review_navi.set(true);
+	};
+	$: unselected_ques = 0;
+	$: for (let i = 0; i < $question_data.length; i++) {
+		let correct_indx = 0;
+		if ($choose_ans[i]) {
 			for (let j = 0; j < 4; j++) {
-				if (JSON.parse($question__data[i].content_text).answers[j].answer == $choose__ans[i]) {
-					correct__indx = j;
+				if (JSON.parse($question_data[i].content_text).answers[j].answer == $choose_ans[i]) {
+					correct_indx = j;
 				}
 			}
 		} else {
-			correct__indx = null;
+			correct_indx = null;
 		}
-		answerchoosebyuser__arr[i] = correct__indx;
-		$answerchoosebyuser[i] = correct__indx;
+		answerchoosebyuser_arr[i] = correct_indx;
+		$answerchoosebyuser[i] = correct_indx;
 	}
-	$: for (let i = 0; i < $question__data.length; i++) {
+	$: for (let i = 0; i < $question_data.length; i++) {
 		let actualCorrect = 0;
 		for (let j = 0; j < 4; j++) {
-			if (JSON.parse($question__data[i].content_text).answers[j].is_correct == '1') {
+			if (JSON.parse($question_data[i].content_text).answers[j].is_correct == '1') {
 				actualCorrect = j;
 			}
 		}
-		actualcorrect__arry[i] = actualCorrect;
+		actualcorrect_arry[i] = actualCorrect;
 		$actualcorrect[i] = actualCorrect;
 	}
-	$: for (let i = 0; i < answerchoosebyuser__arr.length; i++) {
-		if (answerchoosebyuser__arr[i] != null) {
-			if (answerchoosebyuser__arr[i] == actualcorrect__arry[i]) {
+	$: for (let i = 0; i < answerchoosebyuser_arr.length; i++) {
+		if (answerchoosebyuser_arr[i] != null) {
+			if (answerchoosebyuser_arr[i] == actualcorrect_arry[i]) {
 				correct = correct + 1;
 				percentage = Math.round((correct / 11) * 100);
 			} else {
 				incorrect = incorrect + 1;
 			}
 		} else {
-			unselected__ques += 1;
+			unselected_ques += 1;
 		}
 	}
-	const reviewPage = () => {
-		review__navi.set(true);
-	};
 </script>
 
 <div class="resultPage">
 	<Header />
-	<div class="resultPage__container flex">
-		<div class="resultData flex flex__colomn items__center justify__center percentage">
+	<div class="resultPage_container flex">
+		<div class="result_data flex flex_colomn items_center justify_center percentage">
 			<h3>Result</h3>
 			<p>{percentage} %</p>
 		</div>
-		<div class="resultData flex flex__colomn items__center justify__center totalItem">
+		<div class="result_data flex flex_colomn items_center justify_center totalItem">
 			<h3>Total item</h3>
 			<p>11</p>
 		</div>
-		<div class="resultData flex flex__colomn items__center justify__center correct">
+		<div class="result_data flex flex_colomn items_center justify_center correct">
 			<h3>Correct</h3>
 			<p>{correct}</p>
 		</div>
-		<div class="resultData flex flex__colomn items__center justify__center incorrect">
+		<div class="result_data flex flex_colomn items_center justify_center incorrect">
 			<h3>Inorrect</h3>
 			<p>{incorrect}</p>
 		</div>
-		<div class="resultData flex flex__colomn items__center justify__center unattemted">
+		<div class="result_data flex flex_colomn items_center justify_center unattemted">
 			<h3>Unattempted</h3>
-			<p>{unselected__ques}</p>
+			<p>{unselected_ques}</p>
 		</div>
 	</div>
-	<div class="resultAnswerContainer">
-		{#each $question__data as ques, i}
+	<div class="resultanswer_container">
+		{#each $question_data as ques, i}
 			<a href={`review/${i}`} on:click={reviewPage}>
-				<div class="answerContainer flex items__center">
-					<div class="number flex items__center justify__center">
+				<div class="answer_container flex items_center">
+					<div class="number flex items_center justify_center">
 						<span>{i + 1}</span>
 					</div>
-					<h4 class="questionWidth posi__abso">{ques.snippet}</h4>
-					<div class="resultOption posi__abso flex">
+					<h4 class="question_width posi_abso question_test">{ques.snippet}</h4>
+					<div class="result_option posi_abso flex">
 						{#each JSON.parse(ques.content_text).answers as _, j}
 							<div
 								class="{`${
-									actualcorrect__arry[i] == j
-								}`} answer  flex  items__center justify__center"
-								class:selected={actualcorrect__arry[i] != answerchoosebyuser__arr[i] &&
-								answerchoosebyuser__arr[i] == j
+									actualcorrect_arry[i] == j
+								}`} answer  flex  items_center justify_center"
+								class:selected={actualcorrect_arry[i] != answerchoosebyuser_arr[i] &&
+								answerchoosebyuser_arr[i] == j
 									? true
 									: false}
 							>
@@ -110,18 +110,28 @@
 							</div>
 						{/each}
 					</div>
-					{#if answerchoosebyuser__arr[i] == actualcorrect__arry[i]}
+					<div class="attem">
+
+					
+					{#if answerchoosebyuser_arr[i] == actualcorrect_arry[i]}
 						<span>Correct</span>
-					{:else if answerchoosebyuser__arr[i] == null}
+					{:else if answerchoosebyuser_arr[i] == null}
 						<span>Unattempted</span>
 					{:else}
 						<span>Incorrect</span>
 					{/if}
+				</div>
 				</div>
 			</a>
 		{/each}
 	</div>
 </div>
 <a href="/">
-	<button class="button textPage__option" style="width: 200px;">Go To Dashboard</button>
+	<button class="button textPage_option" style="width: 200px;">Go To Dashboard</button>
 </a>
+<style>
+.attem{
+width: 100px;
+text-align: right;
+}
+</style>

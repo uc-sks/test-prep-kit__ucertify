@@ -1,15 +1,15 @@
 <script>
-	export let show = false;
 	import '../../src/index.css'
+	export let show = false;
 </script>
 
 {#if show}
-	<div class="confirm__box flex justify__center items__center">
-		<div class="modal flex flex__colomn items__center">
+	<div class="confirm_box flex justify_center items_center">
+		<div class="modal flex flex_colomn items_center">
 			<h2>Are you sure want to end the test</h2>
 			<div class="buttons">
 				<button class="button" on:click|self={() => (show = false)}>NO</button>
-				<a href="/resultPage">
+				<a href={"/resultPage"}>
 					<button class="button">YES</button>
 				</a>
 			</div>

@@ -14,7 +14,7 @@
 
 <Header />
 <div class="start_button">
-	<a href="/testPage">
+	<a href={"/testPage"}>
 		<button class="start button">Start Test</button>
 	</a>
 </div>
